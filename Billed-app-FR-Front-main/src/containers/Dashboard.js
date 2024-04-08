@@ -145,9 +145,10 @@ export default class {
       this.counter ++
     }
 
+    // TICKET 4
     bills.forEach(bill => {
       $(`#open-bill${bill.id}`)
-      //::: off pour supprimer les gestionnaire d'evenements lié a l'element
+      //::: off pour supprimer les gestionnaire d'evenements précédemment liés a l'element
       .off()
       .click((e) => this.handleEditTicket(e, bill, bills))
     })

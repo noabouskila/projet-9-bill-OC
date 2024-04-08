@@ -15,47 +15,50 @@ export default class NewBill {
     this.billId = null
     new Logout({ document, localStorage, onNavigate })
   }
-  handleChangeFile = e => {
-    e.preventDefault()
-    const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
-    const filePath = e.target.value.split(/\\/g)
-    const fileName = filePath[filePath.length-1]
 
+  handleChangeFile = e => {
+    e.preventDefault();
+  
+    const fileInput = this.document.querySelector(`input[data-testid="file"]`);
+    const file = fileInput.files[0];
+    const filePath = fileInput.value.split(/\\/g);
+    const fileName = filePath[filePath.length - 1];
     
-    ////
-    // ICI JE DEVRAIS VERIFIER L'EXTENTION DU FICHIER ET INTERDIRE LES FICHIERS NON SUPPORTES
+    // ticket 3 :GERER L'EXTENTION DU FICHIER ICI
     const allowedExtensions = ['jpg', 'jpeg', 'png'];
     const fileExtension = fileName.split('.').pop().toLowerCase();
-
+    const fileError = this.document.getElementById('file-error');
+  
     if (!allowedExtensions.includes(fileExtension)) {
-      const fileError = this.document.getElementById('file-error');
-      fileError.textContent = 'Fichier non autorisée. Veuillez sélectionner un fichier avec une extension JPG, JPEG ou PNG.';
-      fileInput.value = ''; 
+      
+      fileError.textContent = 'Fichier non autorisé. Veuillez sélectionner un fichier avec une extension JPG, JPEG ou PNG.';
+      fileInput.value = ''; // Réinitialiser la valeur du champ de fichier
       return;
     }
+    else{fileError.textContent=''}
+    // 
+  
+    const formData = new FormData();
+    const email = JSON.parse(localStorage.getItem("user")).email;
+    formData.append('file', file);
+    formData.append('email', email);
+  
+    this.store.bills().create({
+      data: formData,
+      headers: {
+        noContentType: true
+      }
+    })
+    .then(({fileUrl, key}) => {
+      console.log(fileUrl);
+      this.billId = key;
+      this.fileUrl = fileUrl;
+      this.fileName = fileName;
+       
 
-    ////////  
+    })
+    .catch(error => console.error(error));
 
-
-    const formData = new FormData()
-    const email = JSON.parse(localStorage.getItem("user")).email
-    formData.append('file', file)
-    formData.append('email', email)
-
-    this.store
-      .bills()
-      .create({
-        data: formData,
-        headers: {
-          noContentType: true
-        }
-      })
-      .then(({fileUrl, key}) => {
-        console.log(fileUrl)
-        this.billId = key
-        this.fileUrl = fileUrl
-        this.fileName = fileName
-      }).catch(error => console.error(error))
   }
   handleSubmit = e => {
     e.preventDefault()

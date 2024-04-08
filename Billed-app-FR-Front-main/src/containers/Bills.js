@@ -1,6 +1,9 @@
 import { ROUTES_PATH } from '../constants/routes.js'
 import { formatDate, formatStatus } from "../app/format.js"
 import Logout from "./Logout.js"
+import { bills } from '../fixtures/bills.js'
+// import { format } from 'path'
+
 
 export default class {
   constructor({ document, onNavigate, store, localStorage }) {
@@ -14,6 +17,14 @@ export default class {
       icon.addEventListener('click', () => this.handleClickIconEye(icon))
     })
     new Logout({ document, localStorage, onNavigate })
+
+
+
+    // Exemple d'utilisation :
+    this.dates = "";
+    this.formatDate = formatDate
+
+
   }
 
   handleClickNewBill = () => {
@@ -27,6 +38,10 @@ export default class {
     $('#modaleFile').modal('show')
   }
 
+
+
+  
+  
   getBills = () => {
     if (this.store) {
       return this.store
@@ -34,12 +49,13 @@ export default class {
       .list()
       .then(snapshot => {
         const bills = snapshot
-         .sort((a, b) => ( new Date(a) < new Date(b) ) ? 1 : -1)
           .map(doc => {
+            console.log('Date before formatting:', doc.date);
             try {
               return {
                 ...doc,
-                date: formatDate(doc.date),
+                date:  formatDate(doc.date),
+                // .sort((a, b) => ((a.date > b.date) ? 1 : -1)),
                 status: formatStatus(doc.status)
               }
             } catch(e) {
@@ -53,26 +69,20 @@ export default class {
               }
             }
           })
-          
+           // TICKET 2 / TRI FACTURES 
+          // Trier les dates du plus lointain au plus proche
+          // .sort((a, b) => (a.date > b.date ? 1 : -1));
+          .sort((a, b) => (a.date > b.date ? 1 : -1));
+            
+          console.log('length',bills.length)
+          console.log(bills)
 
-          // .sort((a, b) => {
-          //   const dateA = new Date(a.date);
-          //   const dateB = new Date(b.date);
-            
-          //   console.log('dateA', dateA, 'dateB', dateB);
-            
-          //   if (isNaN(dateA) || isNaN(dateB)) {
-          //     console.error('Invalid date detected!');
-          //     return 0; // Or some default sorting logic
-          //   }
-            
-          //   return dateA - dateB;
-          // });
-          
-          
-          console.log('length', bills.length)
-         
-        return bills
+          return bills
+        })
+      .catch(error => {
+        console.error("Error fetching bills:", error)
+        // Gérer l'erreur ici si nécessaire
+        throw error; // Rejeter l'erreur pour la capturer à l'endroit où la fonction `getBills` est appelée
       })
     }
   }
