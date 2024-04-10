@@ -72,6 +72,7 @@ export default class {
     this.document = document
     this.onNavigate = onNavigate
     this.store = store
+    
     $('#arrow-icon1').click((e) => this.handleShowTickets(e, bills, 1))
     $('#arrow-icon2').click((e) => this.handleShowTickets(e, bills, 2))
     $('#arrow-icon3').click((e) => this.handleShowTickets(e, bills, 3))
@@ -86,8 +87,17 @@ export default class {
   }
 
   handleEditTicket(e, bill, bills) {
+
+    // console.log(" AVANT this.counter de handleEditTicket",this.counter)
+    // console.log("AVANT this.id de handleEditTicket",this.id)
+   
     if (this.counter === undefined || this.id !== bill.id) this.counter = 0
     if (this.id === undefined || this.id !== bill.id) this.id = bill.id
+
+    // console.log("this.counter de handleEditTicket",this.counter)
+    // console.log("this.id de handleEditTicket",this.id)
+
+
     if (this.counter % 2 === 0) {
       bills.forEach(b => {
         $(`#open-bill${b.id}`).css({ background: '#0D5AE5' })
@@ -131,8 +141,17 @@ export default class {
   }
 
   handleShowTickets(e, bills, index) {
-    if (this.counter === undefined || this.index !== index) this.counter = 0
-    if (this.index === undefined || this.index !== index) this.index = index
+    if (this.counter === undefined || this.index !== index){
+      this.counter = 0
+      this.index = index
+    } 
+    if (this.index === undefined || this.index !== index){
+      this.index = index
+    } 
+    console.log("this.counter de  handleShowTickets",this.counter)
+    console.log("this.index de handleShowTickets",this.index)
+
+
     if (this.counter % 2 === 0) {
       $(`#arrow-icon${this.index}`).css({ transform: 'rotate(0deg)'})
       $(`#status-bills-container${this.index}`)
@@ -145,14 +164,13 @@ export default class {
       this.counter ++
     }
 
-    // TICKET 4
+    // // TICKET 4
     bills.forEach(bill => {
       $(`#open-bill${bill.id}`)
-      //::: off pour supprimer les gestionnaire d'evenements précédemment liés a l'element
-      .off()
-      .click((e) => this.handleEditTicket(e, bill, bills))
+      // ::: off pour supprimer les gestionnaire d'evenements précédemment liés a l'element
+      .off("click")
+      .click((e) => this.handleEditTicket(e, bill, bills))      
     })
-
     return bills
 
   }

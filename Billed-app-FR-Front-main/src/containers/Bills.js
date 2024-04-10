@@ -50,7 +50,7 @@ export default class {
       .then(snapshot => {
         const bills = snapshot
           .map(doc => {
-            console.log('Date before formatting:', doc.date);
+            // console.log('Date before formatting:', doc.date);
             try {
               return {
                 ...doc,
@@ -74,8 +74,8 @@ export default class {
           // .sort((a, b) => (a.date > b.date ? 1 : -1));
           .sort((a, b) => (a.date > b.date ? 1 : -1));
             
-          console.log('length',bills.length)
-          console.log(bills)
+          // console.log('length',bills.length)
+          // console.log(bills)
 
           return bills
         })

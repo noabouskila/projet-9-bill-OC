@@ -1,5 +1,5 @@
 export const formatDate = (dateStr) => {
-  console.log('Date string:', dateStr); // Ajout de la console.log
+  // console.log('Date string:', dateStr); // Ajout de la console.log
   const date = new Date(dateStr)
   // const date = dateSt
 
